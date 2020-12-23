@@ -32,7 +32,7 @@
   async function onFrame(frame) {
 
     const cloneFrame = frame.clone();
-    encoder.encode(cloneFrame, { keyFrame : (frameCount % 30) == 0 } );
+    //encoder.encode(cloneFrame, { keyFrame : (frameCount % 30) == 0 } );
 
     var img = await frame.createImageBitmap();
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
