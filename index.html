@@ -30,11 +30,12 @@
   var frameCount = 0;
 
   function onFrame(frame) {
-    const cloneFrame = frame.clone();
-    encoder.encode(cloneFrame, { keyFrame : (frameCount % 30) == 0 } );
+    console.log(`Decoder1, I decoded a frame!`);
+    encoder.encode(frame, { keyFrame : (frameCount % 30) == 0 } );
   }
 
   async function displayFrame(frame) {
+    console.log(`Decoder2, I decoded a frame!`);
     var img = await frame.createImageBitmap();
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     img.close();
@@ -55,7 +56,7 @@
   });
 
   function onChunk(chunk, config){
-    console.log(`hurray, I encoded a chunk!`);
+    console.log(`Encoder, I encoded a chunk!`);
     if (decoder2.state != "configured" || config.description) {
       decoder2.configure(config);
     }
