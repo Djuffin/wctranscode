@@ -29,11 +29,12 @@
 
   var frameCount = 0;
 
-  async function onFrame(frame) {
-
+  function onFrame(frame) {
     const cloneFrame = frame.clone();
-    //encoder.encode(cloneFrame, { keyFrame : (frameCount % 30) == 0 } );
+    encoder.encode(cloneFrame, { keyFrame : (frameCount % 30) == 0 } );
+  }
 
+  async function displayFrame(frame) {
     var img = await frame.createImageBitmap();
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     img.close();
@@ -43,9 +44,22 @@
     document.getElementById("frameCount").innerText = frameCount;
   }
 
-  function onChunk(chunk){
-    console.log(chunk);
+  let decoder = new VideoDecoder({
+    output: onFrame,
+    error: e => console.error(e),
+  });
+
+  let decoder2 = new VideoDecoder({
+    output: displayFrame,
+    error: e => console.error(e),
+  });
+
+  function onChunk(chunk, config){
     console.log(`hurray, I encoded a chunk!`);
+    if (decoder2.state != "configured" || config.description) {
+      decoder2.configure(config);
+    }
+    decoder2.decode(chunk);
   }
 
   let encoder = new VideoEncoder({
@@ -59,11 +73,6 @@
     height : 360,
     bitrate : 1000000,
     framerate : 30
-  });
-
-  let decoder = new VideoDecoder({
-    output: onFrame,
-    error: e => console.error(e),
   });
 
   demuxer.getConfig().then((config) => {
